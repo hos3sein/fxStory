@@ -5,15 +5,30 @@ import { storyInterface } from './entities/story.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from "mongoose";
 import { Respons } from 'src/respons/respons';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 @Injectable()
 export class StoryService {
 
-  constructor(@InjectModel('story') private storyModel: Model<storyInterface>) { }
+  constructor(@InjectModel('story') private storyModel: Model<storyInterface> ,  @Inject(CACHE_MANAGER) private cachemanager: Cache) { }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async checkStoryTime(){
+    const stories = await this.storyModel.find({activeStory : true})
+    for (let i = 0 ; i < stories.length ; i++){
+      const storyTime = new Date(stories[i]['createdAt']).getTime()
+      const currentTime = new Date().getTime()
+      if ((currentTime - storyTime) > 24*60*60*1000){
+        await this.storyModel.findByIdAndUpdate(stories[i]._id , {activeStory : false})
+      }
+    }
+  }
 
 
 
   async uploadStory(req, res, fileName) {
+    console.log(fileName)
     const user = req.user
     for (let i = 0 ; i < fileName.length ; i ++){
       await this.storyModel.create({
@@ -22,7 +37,7 @@ export class StoryService {
           userId: req.user._id,
           profile: req.user.profile
         },
-        url: `https://cdn.spider-cryptobot.site/story/${fileName[i].fileName}`,
+        url: `https://cdn.spider-cryptobot.site/story/${fileName[i].filename}`,
         type: 'picture',
       })
     }

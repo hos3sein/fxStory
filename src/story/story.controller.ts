@@ -1,17 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Res, Req, UploadedFile, Put, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Res, Req, UploadedFile, Put, UploadedFiles, Inject } from '@nestjs/common';
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { extname } from 'path';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('story')
 export class StoryController {
-  constructor(private readonly storyService: StoryService) {}
+  constructor(private readonly storyService: StoryService , @Inject(CACHE_MANAGER) private cachemanager: Cache) {}
 
 
-  
+  // @Cron(CronExpression.EVERY_MINUTE)
+  // async checkStoryTime(){
+  //   const stories = await this
+  // }
+
+
+
   @Post('uploadStory')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'storyFile' , maxCount : 5 }] 
     , {
@@ -25,7 +33,7 @@ export class StoryController {
         cb(null, `${randomName}${extname(files.originalname)}`)
       }
     
-})}))
+  })}))
   async upload( @Req() req , @Res() res, @UploadedFiles(
   ) storyFile) {
     // console.log()
@@ -34,7 +42,6 @@ export class StoryController {
     return this.storyService.uploadStory(req, res, storyFile.storyFile)
     // return profile
   }
-
 
 
   @Put('seenStory/:storyId')
@@ -64,23 +71,5 @@ export class StoryController {
   }
 
 
-  // @Get()
-  // findAll() {
-  //   return this.storyService.findAll();
-  // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.storyService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateStoryDto: UpdateStoryDto) {
-  //   return this.storyService.update(+id, updateStoryDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.storyService.remove(+id);
-  // }
 }

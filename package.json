@@ -27,6 +27,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^4.1.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.2",
     "nestjs-form-data": "^1.9.91",
