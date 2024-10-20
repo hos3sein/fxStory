@@ -13,17 +13,19 @@ export class StoryService {
 
 
 
-  async uploadStory(req, res, fileName: string) {
+  async uploadStory(req, res, fileName) {
     const user = req.user
-    await this.storyModel.create({
-      user: {
-        username: req.user.username,
-        userId: req.user._id,
-        profile: req.user.profile
-      },
-      url: `https://cdn.spider-cryptobot.site/story/${fileName}`,
-      type: 'picture',
-    })
+    for (let i = 0 ; i < fileName.length ; i ++){
+      await this.storyModel.create({
+        user: {
+          username: req.user.username,
+          userId: req.user._id,
+          profile: req.user.profile
+        },
+        url: `https://cdn.spider-cryptobot.site/story/${fileName[i].fileName}`,
+        type: 'picture',
+      })
+    }
 
     const stories = await this.storyModel.find({ $and: [{ activeStory: true }, { 'user.userId': req.user._id }] })
     console.log(stories)

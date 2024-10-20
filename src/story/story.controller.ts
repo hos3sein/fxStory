@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Res, Req, UploadedFile, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Res, Req, UploadedFile, Put, UploadedFiles } from '@nestjs/common';
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { extname } from 'path';
 
@@ -13,24 +13,25 @@ export class StoryController {
 
   
   @Post('uploadStory')
-  @UseInterceptors(FileInterceptor('storyFile', {
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'storyFile' , maxCount : 5 }] 
+    , {
     storage: diskStorage({
       destination: '/home/uploadedFiles/story'
-      , filename: (req, file, cb) => {
-        console.log(file)
+      , filename: (req, files, cb) => {
+        // console.log(files)
         // Generating a 32 random chars long string
         const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
         //Calling the callback passing the random name generated with the original extension name
-        cb(null, `${randomName}${extname(file.originalname)}`)
+        cb(null, `${randomName}${extname(files.originalname)}`)
       }
-    })
-  }))
-  async upload( @Req() req , @Res() res, @UploadedFile(
+    
+})}))
+  async upload( @Req() req , @Res() res, @UploadedFiles(
   ) storyFile) {
     // console.log()
-    console.log(storyFile)
+    console.log(storyFile.storyFile)
     console.log(req.user)
-    return this.storyService.uploadStory(req, res, storyFile.filename)
+    return this.storyService.uploadStory(req, res, storyFile.storyFile)
     // return profile
   }
 
