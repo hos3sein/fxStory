@@ -55,13 +55,15 @@ export class StoryService {
 
   async getAllStories(req, res) {
     const user = req.user._id;
-    const seen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $in: user } }] })
-    const unSeen = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory: { $ne: user } }] })
+    const userName = req.user.username;
+    const seen = await this.storyModel.find({ $and: [{ activeStory: true } , { seenStory: { $in : user } }, {'user.userId' : {$ne : user}}] })
+    const unSeen = await this.storyModel.find({ $and: [{ activeStory : true } , { seenStory: { $ne: user } } , {'user.userId' : {$ne : user}}] })
+    const self = await this.storyModel.find({$and:[{ activeStory : true } , {'user.userId' :  user}]})
     const unSeenStory = {}
     const SeenStory = {}
     seen.forEach(elem=>{
       if (!SeenStory[elem.user.username]){
-        SeenStory[elem.user.username] = [] 
+        SeenStory[elem.user.username] = []
       }
     })
     console.log(SeenStory)
@@ -77,7 +79,7 @@ export class StoryService {
     unSeen.forEach(elem => {
       unSeenStory[elem.user.username].push(elem)
     })
-    return new Respons(req, res, 200, 'get all stories', null, { seen : SeenStory , unSeen : unSeenStory })
+    return new Respons(req, res, 200, 'get all stories', null, { seen : SeenStory , unSeen : unSeenStory , self : self })
   }
 
   async getStories(req , res , leaderId : string){
