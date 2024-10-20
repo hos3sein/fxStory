@@ -29,7 +29,7 @@ export class Story {
         username: string,
         userId: string,
         profile: string,
-    }   
+    }
 
     @Prop({ type: String, required: true })
     url: string
@@ -47,6 +47,12 @@ export class Story {
 
     @Prop({type : Boolean , default : false})
     deleted : boolean
+
+
+    @Prop({type : [String]})
+    likes : [string]
+
+
 
     /*
     @Prop(raw([

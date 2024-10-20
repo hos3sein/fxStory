@@ -27,33 +27,67 @@ export class StoryService {
 
     const stories = await this.storyModel.find({ $and: [{ activeStory: true }, { 'user.userId': req.user._id }] })
     console.log(stories)
-    return new Respons(req, res, 200, 'upload story', null, { stories: stories })
+    return new Respons(req, res, 200, 'upload story', null , { stories: stories })
 
   }
+
+
+  
+  async likeStory(req, res, storyId: string) {
+    const user = req.user._id;
+    await this.storyModel.findByIdAndUpdate(storyId, { $push : { likes : user } })
+    // const seenSignals = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory : { $in: user } }] })
+    // const unSeen = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory : { $ne: user } }] })
+    return new Respons(req , res , 200 , 'put stories seen by user' , null , '')
+  }
+
 
 
   async makeSeen(req, res, storyId: string) {
     const user = req.user._id;
     await this.storyModel.findByIdAndUpdate(storyId, { $push: { seenStory: user } })
-    const seenSignals = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $in: user } }] })
-    const unSeen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $ne: user } }] })
-    return new Respons(req, res, 200, 'put stories seen by user', null, { seenSignals: seenSignals.reverse(), unSeen: unSeen.reverse() })
+    // const seenSignals = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $in: user } }] })
+    // const unSeen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $ne: user } }] })
+    return new Respons(req, res, 200, 'put stories seen by user', null, '' )
   }
+
 
 
   async getAllStories(req, res) {
     const user = req.user._id;
-    const seenSignals = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $in: user } }] })
-    const unSeen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $ne: user } }] })
-    return new Respons(req, res, 200, 'get all stories', null, { seenSignals: seenSignals.reverse(), unSeen: unSeen.reverse() })
+    const seen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $in: user } }] })
+    const unSeen = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory: { $ne: user } }] })
+    const unSeenStory = {}
+    const SeenStory = {}
+    seen.forEach(elem=>{
+      if (!SeenStory[elem.user.username]){
+        SeenStory[elem.user.username] = [] 
+      }
+    })
+    console.log(SeenStory)
+    seen.forEach(elem => {
+      SeenStory[elem.user.username].push(elem)
+    })
+    unSeen.forEach(elem=>{
+      if (!unSeenStory[elem.user.username]){
+        unSeenStory[elem.user.username] = [] 
+      }
+    })
+    console.log(unSeenStory)
+    unSeen.forEach(elem => {
+      unSeenStory[elem.user.username].push(elem)
+    })
+    return new Respons(req, res, 200, 'get all stories', null, { seen : SeenStory , unSeen : unSeenStory })
   }
 
-  async getStories(req, res , leaderId : string) {
+  async getStories(req , res , leaderId : string){
     // const user = req.user._id;
-    const stories = await this.storyModel.find({ $and: [{ activeStory : true }, { 'user.userId' : leaderId }] })
-    // const unSeen = await this.storyModel.find({ $and: [{ activeStory: true }, { seenStory: { $ne: user } }] })
+    const stories = await this.storyModel.find({ $and : [{ activeStory : true }, { 'user.userId' : leaderId }] })
+    // const unSeen = await this.storyModel.find({ $and: [{ activeStory: true } , { seenStory : { $ne: user } }] })
     return new Respons(req, res, 200, 'get all stories', null, { stories : stories.reverse() })
   }
+
+
 
   async deleteStory(req, res , storyId) {
     const user = req.user._id;
@@ -63,23 +97,4 @@ export class StoryService {
   }
 
 
-  // create(createStoryDto: CreateStoryDto) {
-  //   return 'This action adds a new story';
-  // }
-
-  // findAll() {
-  //   return `This action returns all story`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} story`;
-  // }
-
-  // update(id: number, updateStoryDto: UpdateStoryDto) {
-  //   return `This action updates a #${id} story`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} story`;
-  // }
 }

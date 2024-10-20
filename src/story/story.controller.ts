@@ -41,6 +41,11 @@ export class StoryController {
     return this.storyService.makeSeen(req , res , storyId);
   }
 
+  @Put('likeStory/:storyId')
+  like(@Param('storyId') storyId : string , @Req() req , @Res() res) {
+    return this.storyService.likeStory(req , res , storyId);
+  }
+
   @Get('getAllStories')
   getAll( @Req() req , @Res() res){
     return this.storyService.getAllStories(req , res)
