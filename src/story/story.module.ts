@@ -10,7 +10,7 @@ import { storySchema } from './entities/story.entity';
 import { auth } from 'src/middleware/middleware.middleware';
 
 @Module({
-  imports: [NestjsFormDataModule.config({ storage: MemoryStoredFile }), CacheModule.register(), MulterModule.register({ dest: './uploads' }), ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }), MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
+  imports: [NestjsFormDataModule.config({ storage: MemoryStoredFile }) , CacheModule.register(), MulterModule.register({ dest: './uploads' }), ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }), MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
   MongooseModule.forFeature([{ name: 'story', schema: storySchema }]),
   ],
   controllers: [StoryController],

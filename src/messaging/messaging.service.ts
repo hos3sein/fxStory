@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateMessagingDto } from './dto/create-messaging.dto';
 import { UpdateMessagingDto } from './dto/update-messaging.dto';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
@@ -8,12 +8,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { community, communityInterface } from 'src/content/entities/content.entity';
 import { Respons } from 'src/respons/respons';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 
 
 @Injectable()
 export class MessagingService {
   private channelWrapper: ChannelWrapper;         // make the channel wrapper
-  constructor(@InjectModel('community') private contentModel: Model<communityInterface>) {
+  constructor(@Inject(CACHE_MANAGER) private cachemanager: Cache,@InjectModel('community') private contentModel: Model<communityInterface>) {
     const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     //*its for assert the queues
@@ -86,17 +87,18 @@ export class MessagingService {
         );
         Logger.log('Sent To get leader data . . .');
 
-      const message = await channel.consume('ResForGetUserLeaders')
-      // , async (message) => {             // consume to the tracerResponse
-          console.log(message)
+      channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
+          // console.log(message)
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
           const leader = backData.allLeaders;
           channel.ack(message)                                      // ack the message for finished the connecion
-          console.log('nowwwwwwwwwwwww' , leader)
+          console.log('nowwwwwwwwwwwww')
           // return leader
-          return new Respons(req , res , 200 , 'get all rooms' , null , leader)
-        // })
+          await this.cachemanager.set('ResForGetUserLeaders' , leader)
+        })
+        const leader  = await this.cachemanager.get('ResForGetUserLeaders')
+        return new Respons(req , res , 200 , 'get all rooms' , null , leader)
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')

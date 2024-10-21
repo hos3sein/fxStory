@@ -7,9 +7,11 @@ import { ContentService } from 'src/content/content.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { contentSchema } from 'src/content/entities/content.entity';
 import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
+
 
 @Module({
-  imports: [ ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }) ,  MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING) , MongooseModule.forFeature([{ name: 'community', schema: contentSchema }]) ],
+  imports: [  CacheModule.register() , ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }) ,  MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING) , MongooseModule.forFeature([{ name: 'community', schema: contentSchema }]) ],
   controllers: [MessagingController , ContentController],
   providers: [MessagingService , ContentController , ContentService],
 })
