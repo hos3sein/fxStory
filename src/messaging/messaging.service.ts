@@ -100,7 +100,7 @@ export class MessagingService {
         setTimeout(async()=>{
           const leader  = await this.cachemanager.get(`${req.user._id}`)
           return new Respons(req , res , 200 , 'get all rooms' , null , leader)
-        } , 500)
+        } , 250)
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
