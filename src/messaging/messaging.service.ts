@@ -85,11 +85,11 @@ export class MessagingService {
           Buffer.from(JSON.stringify(req.user._id)),
         );
         Logger.log('Sent To get leader data . . .');
-        const leader = await this.channelWrapper.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
+        const leader =  this.channelWrapper.consume('ResForGetUserLeaders', (message) => {             // consume to the tracerResponse
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
           const leader = backData.allLeaders;
-          channel.ack(message)                           // ack the message for finished the connecion
+          channel.ack(message)                                                                              // ack the message for finished the connecion
           console.log('nowwwwwwwwwwwww')
           return leader
         })
