@@ -49,7 +49,7 @@ export class MessagingService {
           Buffer.from(JSON.stringify(leaderId)),
         );
         Logger.log('Sent To get leader data . . .');
-        return this.channelWrapper.consume('responseForGetUserData', async (message) => {             // consume to the tracerResponse
+        this.channelWrapper.consume('responseForGetUserData' , async (message) => {            // consume to the tracerResponse
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
           const leader = backData.userData;
@@ -65,10 +65,9 @@ export class MessagingService {
             },
             content: body.content,
           })
-
-          channel.ack(message)                   // ack the message for finished the connecion
-          return new Respons(req, res, 200, 'make new post', null, 'data created ')
+          channel.ack(message)                  // ack the message for finished the connecion
         })
+        return new Respons(req, res, 200, 'make new post', null, 'data created ')
       })
     } catch (error) {
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
