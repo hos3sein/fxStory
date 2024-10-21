@@ -95,12 +95,12 @@ export class MessagingService {
           channel.ack(message)                                      // ack the message for finished the connecion
           console.log('nowwwwwwwwwwwww')
           // return leader
-          await this.cachemanager.set('ResForGetUserLeaders' , leader)
+          await this.cachemanager.set(`${req.user._id}` , leader)
         })
         setTimeout(async()=>{
-          const leader  = await this.cachemanager.get('ResForGetUserLeaders')
+          const leader  = await this.cachemanager.get(`${req.user._id}`)
           return new Respons(req , res , 200 , 'get all rooms' , null , leader)
-        } , 1000)
+        } , 500)
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
