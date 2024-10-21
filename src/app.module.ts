@@ -13,12 +13,15 @@ import { MessagingService } from './messaging/messaging.service';
 import { StoryController } from './story/story.controller';
 import { StoryService } from './story/story.service';
 import { storySchema } from './story/entities/story.entity';
+import { ContentModule } from './content/content.module';
+import { contentSchema } from './content/entities/content.entity';
 
 @Module({
   imports: [ NestjsFormDataModule.config({ storage: MemoryStoredFile }), CacheModule.register() , MulterModule.register({ dest: './uploads' })  , ConfigModule.forRoot({envFilePath: 'config.env',isGlobal : true}) , MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
-    MongooseModule.forFeature([{ name: 'story', schema: storySchema }]),
+    MongooseModule.forFeature([{ name: 'story', schema: storySchema } , { name: 'community', schema: contentSchema }]),
     MessagingModule,
-    StoryModule,],
+    StoryModule,
+    ContentModule,],
   controllers: [AppController , MessagingController , StoryController],
   providers: [AppService , MessagingController , MessagingService , StoryController , StoryService],
 })

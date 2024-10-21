@@ -42,7 +42,7 @@ export class StoryService {
       })
     }
 
-    const stories = await this.storyModel.find({ $and: [{ activeStory: true }, { 'user.userId': req.user._id }] })
+    const stories = await this.storyModel.find({ $and: [{ activeStory: true } , { deleted : false } , { 'user.userId': req.user._id }] })
     console.log(stories)
     return new Respons(req, res, 200, 'upload story', null , { stories: stories })
 
@@ -73,9 +73,9 @@ export class StoryService {
   async getAllStories(req, res) {
     const user = req.user._id;
     const userName = req.user.username;
-    const seen = await this.storyModel.find({ $and: [{ activeStory: true } , { seenStory: { $in : user } }, {'user.userId' : {$ne : user}}] })
-    const unSeen = await this.storyModel.find({ $and: [{ activeStory : true } , { seenStory: { $ne: user } } , {'user.userId' : {$ne : user}}] })
-    const self = await this.storyModel.find({$and:[{ activeStory : true } , {'user.userId' :  user}]})
+    const seen = await this.storyModel.find({ $and: [{ activeStory: true }, { deleted : false } , { seenStory: { $in : user } }, {'user.userId' : {$ne : user}}] })
+    const unSeen = await this.storyModel.find({ $and: [{ activeStory : true } , { deleted : false }  , { seenStory: { $ne: user } } , {'user.userId' : {$ne : user}}] })
+    const self = await this.storyModel.find({$and:[{ activeStory : true } , { deleted : false }  , {'user.userId' :  user}]})
     const unSeenStory = {}
     const SeenStory = {}
     seen.forEach(elem=>{
@@ -111,9 +111,8 @@ export class StoryService {
   async deleteStory(req, res , storyId) {
     const user = req.user._id;
     await this.storyModel.findByIdAndUpdate(storyId , {deleted : true})
-    const stories = await this.storyModel.find({ $and: [{ active: true }, { 'user.userId': req.user._id }] })
+    const stories = await this.storyModel.find({ $and: [{ active: true } , { deleted : false } , { 'user.userId': req.user._id }] })
     return new Respons(req, res, 200, 'delete story', null, {stories : stories})
   }
-
 
 }
