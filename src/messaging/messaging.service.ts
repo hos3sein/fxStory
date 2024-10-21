@@ -97,8 +97,10 @@ export class MessagingService {
           // return leader
           await this.cachemanager.set('ResForGetUserLeaders' , leader)
         })
-        const leader  = await this.cachemanager.get('ResForGetUserLeaders')
-        return new Respons(req , res , 200 , 'get all rooms' , null , leader)
+        setTimeout(async()=>{
+          const leader  = await this.cachemanager.get('ResForGetUserLeaders')
+          return new Respons(req , res , 200 , 'get all rooms' , null , leader)
+        } , 100)
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
