@@ -43,7 +43,7 @@ export class MessagingService {
 
   async makePost(req, res, leaderId: string, body) {
     try {
-      return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+      this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
         await this.channelWrapper.sendToQueue(
           'getUserData',
           Buffer.from(JSON.stringify(leaderId)),
@@ -94,7 +94,7 @@ export class MessagingService {
           console.log('nowwwwwwwwwwwww')
           return new Respons(req , res , 200 , 'get all rooms' , null , leader)
         })
-      })   
+      })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
     }
