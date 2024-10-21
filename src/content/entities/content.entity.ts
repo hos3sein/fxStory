@@ -22,6 +22,7 @@ export interface communityInterface extends Document{
 
 @Schema({timestamps : true})
 export class community{
+
     @Prop({type : {}})
     user:{
         username : string,

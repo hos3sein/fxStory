@@ -32,7 +32,6 @@ export class StoryController {
         //Calling the callback passing the random name generated with the original extension name
         cb(null, `${randomName}${extname(files.originalname)}`)
       }
-    
   })}))
   async upload( @Req() req , @Res() res, @UploadedFiles(
   ) storyFile) {

@@ -1,12 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { MessagingService } from 'src/messaging/messaging.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
+import { diskStorage } from 'multer'
+
 
 @Controller('content')
 export class ContentController {
   constructor(private readonly contentService : ContentService ,private readonly messagingService : MessagingService) {}
+
+
+  @Post('uploadPost')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'postFiles' , maxCount : 5 }] 
+    , {
+    storage: diskStorage({
+      destination: '/home/uploadedFiles/post'
+      , filename: (req, files, cb) => {
+        // console.log(files)
+        // Generating a 32 random chars long string
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+        //Calling the callback passing the random name generated with the original extension name
+        cb(null, `${randomName}${extname(files.originalname)}`)
+      }
+  })}))
+  upload(@Req() req , @Res() res ,  @UploadedFiles(
+  ) postFile){
+    return this.contentService.uploadStory(req, res, postFile.postFiles)
+  }
+
 
 
   @Post('newPost/:leaderId')
@@ -20,35 +44,11 @@ export class ContentController {
     return this.messagingService.getUserLeaders(req , res)
   }
 
+
   @Get('getRoom/:leaderId')
   room(@Req() req , @Res() res , @Param('leaderId') leaderId : string ){
     return this.contentService.getRoom(req , res , leaderId)
   }
   
 
-
-  @Post()
-  create(@Body() createContentDto: CreateContentDto) {
-    return this.contentService.create(createContentDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.contentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContentDto: UpdateContentDto) {
-    return this.contentService.update(+id, updateContentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contentService.remove(+id);
-  }
 }

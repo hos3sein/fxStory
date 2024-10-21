@@ -15,29 +15,15 @@ export class ContentService {
     const allContent = await this.contentModel.find({'leader.userId' : leaderId})
     return new Respons(req , res , 200 , 'get rooms content' , '' , allContent)
   }
-
-
-  create(createContentDto: CreateContentDto) {
-    return 'This action adds a new content';
-  }
-
-
-  findAll() {
-    return `This action returns all content`;
-  }
-
-
-  findOne(id: number) {
-    return `This action returns a #${id} content`;
-  }
-
-
-  update(id: number, updateContentDto: UpdateContentDto) {
-    return `This action updates a #${id} content`;
-  }
-
   
-  remove(id: number) {
-    return `This action removes a #${id} content`;
+  
+  async uploadStory(req , res , postFiles){
+    const path = []
+    for (let i = 0 ; i<postFiles.length ; i ++){
+      path.push(`https://cdn.spider-cryptobot.site/post/${postFiles[i].filename}`)
+    }
+    return new Respons(req , res , 200 , 'upload posts' , '' , {pathes : path})
   }
+
+
 }
