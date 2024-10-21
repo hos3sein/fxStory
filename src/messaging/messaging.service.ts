@@ -78,13 +78,13 @@ export class MessagingService {
 
   
   async getUserLeaders(req , res){
-    const leaders = req.user._id;   
+    const leaders = req.user._id; 
     try {
-     return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+    return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
         await this.channelWrapper.sendToQueue(
           'getUserLeaders',
           Buffer.from(JSON.stringify(req.user._id)),
-        );    
+        );
         Logger.log('Sent To get leader data . . .');
         this.channelWrapper.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
@@ -92,9 +92,7 @@ export class MessagingService {
           const leader = backData.allLeaders;
           channel.ack(message)                     // ack the message for finished the connecion
           console.log('nowwwwwwwwwwwww')
-          
-          return new Respons(req, res, 200, 'get all rooms', null, leader)
-         
+          return new Respons(req , res , 200 , 'get all rooms' , null , leader)
         })
       })   
     } catch (error) {    
