@@ -87,7 +87,7 @@ export class MessagingService {
         );
         Logger.log('Sent To get leader data . . .');
 
-      channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
+      await channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
           // console.log(message)
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
