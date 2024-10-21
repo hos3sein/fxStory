@@ -85,6 +85,7 @@ export class MessagingService {
           Buffer.from(JSON.stringify(req.user._id)),
         );
         Logger.log('Sent To get leader data . . .');
+
         this.channelWrapper.consume('ResForGetUserLeaders', (message) => {             // consume to the tracerResponse
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
@@ -95,9 +96,8 @@ export class MessagingService {
         }).then((resault)=>{
           console.log('resault' , resault)
         })
-        // console.log('leader>>>>>' , leader)
 
-        return new Respons(req , res , 200 , 'get all rooms' , null , leader)
+        return new Respons(req , res , 200 , 'get all rooms' , null , '')
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
