@@ -86,16 +86,17 @@ export class MessagingService {
         );
         Logger.log('Sent To get leader data . . .');
 
-       return channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
+      const message = await channel.consume('ResForGetUserLeaders')
+      // , async (message) => {             // consume to the tracerResponse
           // console.log(message)
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
           const leader = backData.allLeaders;
           channel.ack(message)                                      // ack the message for finished the connecion
-          console.log('nowwwwwwwwwwwww')
+          console.log('nowwwwwwwwwwwww' , leader)
           // return leader
           return new Respons(req , res , 200 , 'get all rooms' , null , leader)
-        })
+        // })
       })
     } catch (error) {    
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
