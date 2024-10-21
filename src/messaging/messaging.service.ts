@@ -80,7 +80,7 @@ export class MessagingService {
     const leaders = req.user._id; 
     try {
     return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
-        await channel.sendToQueue(
+        await this.channelWrapper.sendToQueue(
           'getUserLeaders' , 
           Buffer.from(JSON.stringify(req.user._id)),
         );
