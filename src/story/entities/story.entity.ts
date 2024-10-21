@@ -11,6 +11,7 @@ export interface storyInterface extends Document {
     url: string
 
     seenStory: [string]
+    likes : [string]
 
     typeStory: string
 

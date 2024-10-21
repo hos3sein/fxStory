@@ -52,10 +52,20 @@ export class StoryService {
   
   async likeStory(req, res, storyId: string) {
     const user = req.user._id;
-    await this.storyModel.findByIdAndUpdate(storyId, { $push : { likes : user } })
-    // const seenSignals = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory : { $in: user } }] })
-    // const unSeen = await this.storyModel.find({ $and: [{ activeStory : true }, { seenStory : { $ne: user } }] })
-    return new Respons(req , res , 200 , 'put stories seen by user' , null , '')
+    const story = await this.storyModel.findById(storyId)
+    let disLike = false
+    if (story.likes.includes(user)){
+      disLike = true
+    }
+    let resault;
+    if (disLike){
+      const dislike = await this.storyModel.findByIdAndUpdate(storyId, { $pull : { likes : user } })
+      resault = dislike
+    }else{
+      const like = await this.storyModel.findByIdAndUpdate(storyId, { $push : { likes : user } })
+      resault = like
+    }
+    return new Respons(req , res , 200 , 'like story by user' , null , {likes : resault.likes.length})
   }
 
 
