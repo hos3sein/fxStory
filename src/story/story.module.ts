@@ -27,7 +27,7 @@ export class StoryModule implements NestModule {
         { path: 'story/getAllStories', method: RequestMethod.GET },
         { path: 'story/getLeaderStories/:leaderId', method: RequestMethod.GET },
         { path: 'story/deleteStory/:storyId', method: RequestMethod.DELETE },
-        { path: 'storylikeStory/:storyId', method: RequestMethod.PUT },
+        { path: 'story/likeStory/:storyId', method: RequestMethod.PUT },
 
       )
   }
