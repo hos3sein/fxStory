@@ -43,13 +43,13 @@ export class MessagingService {
 
   async makePost(req, res, leaderId: string, body) {
     try {
-      this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+      return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
         await this.channelWrapper.sendToQueue(
           'getUserData',
           Buffer.from(JSON.stringify(leaderId)),
         );
         Logger.log('Sent To get leader data . . .');
-        this.channelWrapper.consume('responseForGetUserData', async (message) => {             // consume to the tracerResponse
+        return this.channelWrapper.consume('responseForGetUserData', async (message) => {             // consume to the tracerResponse
           console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
           const backData = JSON.parse(message.content.toString())
           const leader = backData.userData;
