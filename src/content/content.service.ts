@@ -24,6 +24,4 @@ export class ContentService {
     }
     return new Respons(req , res , 200 , 'upload posts' , '' , {pathes : path})
   }
-
-
 }
