@@ -20,7 +20,7 @@ export class ContentController {
     storage: diskStorage({
       destination: '/home/uploadedFiles/post'
       , filename: (req, files, cb) => {
-        // console.log(files)
+        console.log(files)
         // Generating a 32 random chars long string
         const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
         //Calling the callback passing the random name generated with the original extension name
