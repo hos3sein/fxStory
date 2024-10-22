@@ -18,6 +18,7 @@ export class ContentService {
   
   
   async uploadStory(req , res , postFiles){
+    console.log(postFiles)
     const path = []
     for (let i = 0 ; i<postFiles.length ; i ++){
       path.push(`https://cdn.spider-cryptobot.site/post/${postFiles[i].filename}`)
