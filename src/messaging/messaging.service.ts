@@ -53,7 +53,8 @@ export class MessagingService {
         );
         Logger.log('Sent To get leader data . . .');
         await channel.consume('responseForGetUserData' , async (message) => {            // consume to the tracerResponse
-          console.log('backMessage for get leader data' , JSON.parse(message.content.toString()))            // log the response from the tracer service
+          // console.log('backMessage for get leader data' , JSON.parse(message.content.toString()))            // log the response from the tracer service
+          console.log('bbbbb' , body)
           const backData = JSON.parse(message.content.toString())
           const leader = backData.userData;
           await this.contentModel.create({
