@@ -74,28 +74,15 @@ export class MessagingService {
   async getUserLeaders(req, res) {
     const leaders = req.user._id;
     try {
-      return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
-        await this.channelWrapper.sendToQueue(
-          'getUserLeaders',
-          Buffer.from(JSON.stringify(req.user._id)),
-        );
-        Logger.log('Sent To get leader data . . .');
+          const userData = await this.userModel.findById(req.user._id).select(['username' , 'profile' , 'role'])
 
-        await channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
-          // console.log(message)
-          console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
-          const backData = JSON.parse(message.content.toString())
-          const leader = backData.allLeaders;
-          channel.ack(message)                                      // ack the message for finished the connecion
-          console.log('nowwwwwwwwwwwww')
-          // return leader
-          await this.cachemanager.set(`${req.user._id}`, leader)
-        })
-        setTimeout(async () => {
-          const leader = await this.cachemanager.get(`${req.user._id}`)
-          return new Respons(req, res, 200, 'get all rooms', null, leader)
-        }, 250)
-      })
+          const allLeaders = await this.userModel.find({$and : [{ role: 3 } , {'subScriber.userId' : {$in : [req.user._id]}}]}).select(["username" , 'profile'])
+          
+          console.log('sent user data ...')
+          if (userData.role == 3){
+            allLeaders.push(userData)
+          }
+          return new Respons(req, res, 200, 'get all rooms', null, allLeaders)
     } catch (error) {
       return new Respons(req, res, 500, 'make new post', `${error}`, '')
     }
