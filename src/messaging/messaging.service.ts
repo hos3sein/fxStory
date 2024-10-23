@@ -46,13 +46,13 @@ export class MessagingService {
   async makePost(req, res, leaderId: string, body) {
     console.log('body2222' , body)
     try {
-      return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+      // return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
         await this.channelWrapper.sendToQueue(
           'getUserData',
           Buffer.from(JSON.stringify(leaderId)),
         );
         Logger.log('Sent To get leader data . . .');
-        await channel.consume('responseForGetUserData' , async (message) => {            // consume to the tracerResponse
+        await this.channelWrapper.consume('responseForGetUserData' , async (message) => {            // consume to the tracerResponse
           // console.log('backMessage for get leader data' , JSON.parse(message.content.toString()))            // log the response from the tracer service
           console.log('bbbbb' , body)
           const backData = JSON.parse(message.content.toString())
@@ -69,10 +69,10 @@ export class MessagingService {
             },
             content: body.content,
           })
-          channel.ack(message)                  // ack the message for finished the connecion
+          this.channelWrapper.ack(message)                  // ack the message for finished the connecion
         })
         return new Respons(req, res, 200, 'make new post', null, 'data created')
-      })
+      // })
     } catch (error) {
       return new Respons(req, res, 500 , 'make new post', `${error}` , '')
     }
