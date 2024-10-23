@@ -15,10 +15,11 @@ import { StoryService } from './story/story.service';
 import { storySchema } from './story/entities/story.entity';
 import { ContentModule } from './content/content.module';
 import { contentSchema } from './content/entities/content.entity';
+import { UserSchema } from './messaging/entities/user.entity';
 
 @Module({
   imports: [ NestjsFormDataModule.config({ storage: MemoryStoredFile }), CacheModule.register() , MulterModule.register({ dest: './uploads' })  , ConfigModule.forRoot({envFilePath: 'config.env',isGlobal : true}) , MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
-    MongooseModule.forFeature([{ name: 'story', schema: storySchema } , { name: 'community', schema: contentSchema }]),
+    MongooseModule.forFeature([{ name: 'story', schema: storySchema },{ name: 'user', schema: UserSchema } , { name: 'community', schema: contentSchema }]),
     MessagingModule,
     StoryModule,
     ContentModule,],

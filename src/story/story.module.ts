@@ -8,10 +8,11 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { storySchema } from './entities/story.entity';
 import { auth } from 'src/middleware/middleware.middleware';
+import { UserSchema } from 'src/messaging/entities/user.entity';
 
 @Module({
   imports: [NestjsFormDataModule.config({ storage: MemoryStoredFile }) , CacheModule.register(), MulterModule.register({ dest: './uploads' }), ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }), MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
-  MongooseModule.forFeature([{ name: 'story', schema: storySchema }]),
+  MongooseModule.forFeature([{ name: 'story', schema: storySchema },{ name: 'user', schema: UserSchema }]),
   ],
   controllers: [StoryController],
   providers: [StoryService],
