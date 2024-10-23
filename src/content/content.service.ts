@@ -11,7 +11,8 @@ export class ContentService {
 
   constructor(@InjectModel('community') private contentModel : Model<communityInterface>){}
 
-  async getRoom(req , res , leaderId : string){
+  async getRoom(req , res , leaderId : string , params){
+    console.log(params.page)
     const allContent = await this.contentModel.find({'leader.userId' : leaderId})
     return new Respons(req , res , 200 , 'get rooms content' , '' , allContent)
   }

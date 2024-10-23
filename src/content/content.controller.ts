@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Req, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
@@ -48,8 +48,8 @@ export class ContentController {
 
 
   @Get('getRoom/:leaderId')
-  room(@Req() req , @Res() res , @Param('leaderId') leaderId : string ){
-    return this.contentService.getRoom(req , res , leaderId)
+  room(@Req() req , @Res() res , @Param('leaderId') leaderId : string , @Query() params: any ){
+    return this.contentService.getRoom(req , res , leaderId , params)
   }
   
 
