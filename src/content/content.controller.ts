@@ -36,6 +36,7 @@ export class ContentController {
 
   @Post('newPost/:leaderId')
   make(@Body() body : Request ,@Req() req , @Res() res , @Param('leaderId') leaderId : string){
+    console.log('body1111' , body)
     return this.messagingService.makePost(req , res , leaderId , body)
   }
   

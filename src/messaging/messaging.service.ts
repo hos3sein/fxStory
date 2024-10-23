@@ -43,6 +43,7 @@ export class MessagingService {
 
 
   async makePost(req, res, leaderId: string, body) {
+    console.log('body2222' , body)
     try {
       return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
         await this.channelWrapper.sendToQueue(
