@@ -15,7 +15,7 @@ import { userInterFace } from './entities/user.entity';
 @Injectable()
 export class MessagingService {
   private channelWrapper: ChannelWrapper;         // make the channel wrapper
-  constructor(@Inject(CACHE_MANAGER) private cachemanager: Cache, @InjectModel('user') private userModel: Model<userInterFace>, @InjectModel('community') private contentModel: Model<communityInterface>) {
+  constructor(@Inject(CACHE_MANAGER) private cachemanager: Cache,@InjectModel('user') private userModel : Model<userInterFace>,@InjectModel('community') private contentModel: Model<communityInterface>) {
     const connection = amqp.connect(['amqp://localhost']);     // connect to rabbit
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////!
     //*its for assert the queues
@@ -44,52 +44,73 @@ export class MessagingService {
 
 
   async makePost(req, res, leaderId: string, body) {
-    console.log('body2222', body)
+    console.log('body2222' , body)
     try {
-
-      const leader = await this.userModel.findById(leaderId)
-
-      await this.contentModel.create({
-        user: {
-          userId: req.user._id,
-          username: req.user.username
-        },
-        leader: {
-          userId: leader._id,
-          username: leader.username,
-          profile: leader.profile
-        },
-        content: body.content,
+      return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+        await this.channelWrapper.sendToQueue(
+          'getUserData',
+          Buffer.from(JSON.stringify(leaderId)),
+        );
+        Logger.log('Sent To get leader data . . .');
+        await channel.consume('responseForGetUserData' , async (message) => {            // consume to the tracerResponse
+          console.log('backMessage for get leader data' , JSON.parse(message.content.toString()))            // log the response from the tracer service
+          const backData = JSON.parse(message.content.toString())
+          const leader = backData.userData;
+          await this.contentModel.create({
+            user: {
+              userId: req.user._id,
+              username: req.user.username
+            },
+            leader: {
+              userId: leader._id,
+              username: leader.username,
+              profile: leader.profile
+            },
+            content: body.content,
+          })
+          channel.ack(message)                  // ack the message for finished the connecion
+        })
+        return new Respons(req, res, 200, 'make new post', null, 'data created')
       })
-
-      return new Respons(req, res, 200, 'make new post', null, 'data created')
-
     } catch (error) {
-      return new Respons(req, res, 500, 'make new post', `${error}`, '')
+      return new Respons(req, res, 500 , 'make new post', `${error}` , '')
     }
   }
+  
 
-
-
-  async getUserLeaders(req, res) {
-    const leaders = req.user._id;
+  
+  async getUserLeaders(req , res){
+    const leaders = req.user._id; 
     try {
-          const userData = await this.userModel.findById(req.user._id).select(['username' , 'profile' , 'role'])
+    return this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {        // make listener for response from the tracer service
+        await this.channelWrapper.sendToQueue(
+          'getUserLeaders' , 
+          Buffer.from(JSON.stringify(req.user._id)),
+        );
+        Logger.log('Sent To get leader data . . .');
 
-          const allLeaders = await this.userModel.find({$and : [{ role: 3 } , {'subScriber.userId' : {$in : [req.user._id]}}]}).select(["username" , 'profile'])
-          
-          console.log('sent user data ...')
-          if (userData.role == 3){
-            allLeaders.push(userData)
-          }
-          return new Respons(req, res, 200, 'get all rooms', null, allLeaders)
-    } catch (error) {
-      return new Respons(req, res, 500, 'make new post', `${error}`, '')
+      await channel.consume('ResForGetUserLeaders', async (message) => {             // consume to the tracerResponse
+          // console.log(message)
+          console.log('backMessage for get leader data', JSON.parse(message.content.toString()))            // log the response from the tracer service
+          const backData = JSON.parse(message.content.toString())
+          const leader = backData.allLeaders;
+          channel.ack(message)                                      // ack the message for finished the connecion
+          console.log('nowwwwwwwwwwwww')
+          // return leader
+          await this.cachemanager.set(`${req.user._id}` , leader)
+        })
+        setTimeout(async()=>{
+          const leader  = await this.cachemanager.get(`${req.user._id}`)
+          return new Respons(req , res , 200 , 'get all rooms' , null , leader)
+        } , 250)
+      })
+    } catch (error) {    
+      return new Respons(req, res, 500 , 'make new post', `${error}` , '')
     }
   }
 
 
-  //////////////! finish line
+//////////////! finish line
 }
 
 
