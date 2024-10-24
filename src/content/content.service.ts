@@ -12,10 +12,10 @@ export class ContentService {
   constructor(@InjectModel('community') private contentModel : Model<communityInterface>){}
 
   async getRoom(req , res , leaderId : string , params){
-    console.log(leaderId)
+    // console.log(leaderId)
     const allContent = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1}).limit(parseInt(params.page)*5)
-    const allContent2 = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1})
-    console.log('content>>>>>>>>' , allContent2)
+    // const allContent2 = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1})
+    // console.log('content>>>>>>>>' , allContent2)
     return new Respons(req , res , 200 , 'get rooms content' , '' , allContent.reverse())
   }
   
@@ -37,6 +37,7 @@ export class ContentService {
     const updated = await this.contentModel.findById(contentId)
     return new Respons(req , res , 200 , 'update posts' , '' , {updatedPost : updated})
   }
+
 
   async deleter(req , res , contentId){
     await this.contentModel.findByIdAndDelete(contentId)
