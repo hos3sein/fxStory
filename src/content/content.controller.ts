@@ -47,6 +47,17 @@ export class ContentController {
   }
 
 
+  @Post('update/:contentId')
+  update(@Req() req , @Res() res , @Param('contentId') contentId : string , @Body() body:Request){
+    return this.contentService.updater(req , res , contentId , body)
+  }
+  
+  @Delete('delete/:contentId')
+  delete(@Req() req , @Res() res , @Param('contentId') contentId : string){
+    return this.contentService.deleter(req , res , contentId)
+  }
+
+
   @Get('getRoom/:leaderId')
   room(@Req() req , @Res() res , @Param('leaderId') leaderId : string , @Query() params: any ){
     return this.contentService.getRoom(req , res , leaderId , params)

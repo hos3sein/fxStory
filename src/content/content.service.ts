@@ -27,4 +27,27 @@ export class ContentService {
     }
     return new Respons(req , res , 200 , 'upload posts' , '' , {pathes : path})
   }
+
+
+
+
+  async updater(req , res , contentId , body){
+    await this.contentModel.findByIdAndUpdate(contentId , body)
+    const updated = await this.contentModel.findById(contentId)
+    return new Respons(req , res , 200 , 'update posts' , '' , {updatedPost : updated})
+  }
+
+  async deleter(req , res , contentId){
+    await this.contentModel.findByIdAndDelete(contentId)
+    return new Respons(req , res , 200 , 'deleted posts' , '' , 'post deleted successfull')
+  }
+
+
+  
+
+
+
+
+
+
 }

@@ -24,7 +24,9 @@ export class ContentModule implements NestModule {
       .apply(auth).forRoutes({ path: 'content/newPost/:leaderId', method: RequestMethod.POST },
         { path: 'content/allRooms', method: RequestMethod.GET },
         { path: 'content/getRoom/:leaderId', method: RequestMethod.GET },
-        { path: 'content/uploadPost', method: RequestMethod.POST }
+        { path: 'content/uploadPost', method: RequestMethod.POST },
+        { path: 'content/update/:contentId', method: RequestMethod.POST },
+        { path: 'content/delete/:contentId', method: RequestMethod.DELETE },
       )
   }
 }
