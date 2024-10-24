@@ -15,6 +15,7 @@ export class ContentService {
     console.log(params.page)
 
     const allContent = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1}).limit(parseInt(params.page)*5)
+    console.log('content>>>>>>>>' , allContent)
     return new Respons(req , res , 200 , 'get rooms content' , '' , allContent.reverse())
   }
   
