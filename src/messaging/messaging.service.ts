@@ -50,7 +50,8 @@ export class MessagingService {
           await this.contentModel.create({
             user: {
               userId: req.user._id,
-              username: req.user.username
+              username: req.user.username,
+              profile : req.user.profile
             },
             leader: {
               userId: leader._id,
