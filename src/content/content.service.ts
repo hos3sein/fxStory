@@ -12,8 +12,7 @@ export class ContentService {
   constructor(@InjectModel('community') private contentModel : Model<communityInterface>){}
 
   async getRoom(req , res , leaderId : string , params){
-    console.log(params.page)
-
+    console.log(leaderId)
     const allContent = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1}).limit(parseInt(params.page)*5)
     const allContent2 = await this.contentModel.find({'leader.userId' : leaderId}).sort({'createdAt' : -1})
     console.log('content>>>>>>>>' , allContent2)

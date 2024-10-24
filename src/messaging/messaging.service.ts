@@ -54,7 +54,7 @@ export class MessagingService {
               profile : req.user.profile
             },
             leader: {
-              userId: leader._id,
+              userId: leader._id.toString(),
               username: leader.username,
               profile: leader.profile
             },
