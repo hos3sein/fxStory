@@ -32,10 +32,10 @@ export class ContentController {
     return this.contentService.uploadStory(req, res, postFile.postFiles)
   }
 
-
+  
 
   @Post('newPost/:leaderId')
-  make(@Body() body : Request ,@Req() req , @Res() res , @Param('leaderId') leaderId : string){
+  make(@Body() body : {content : {}} ,@Req() req , @Res() res , @Param('leaderId') leaderId : string){
     console.log('body1111' , body)
     return this.messagingService.makePost(req , res , leaderId , body)
   }

@@ -16,6 +16,7 @@ import { storySchema } from './story/entities/story.entity';
 import { ContentModule } from './content/content.module';
 import { contentSchema } from './content/entities/content.entity';
 import { UserSchema } from './messaging/entities/user.entity';
+import { ConnectionService } from './connection/connection.service';
 
 @Module({
   imports: [ NestjsFormDataModule.config({ storage: MemoryStoredFile }), CacheModule.register() , MulterModule.register({ dest: './uploads' })  , ConfigModule.forRoot({envFilePath: 'config.env',isGlobal : true}) , MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
@@ -24,6 +25,6 @@ import { UserSchema } from './messaging/entities/user.entity';
     StoryModule,
     ContentModule,],
   controllers: [AppController , MessagingController , StoryController],
-  providers: [AppService , MessagingController , MessagingService , StoryController , StoryService],
+  providers: [AppService , MessagingController , MessagingService , StoryController , StoryService, ConnectionService],
 })
 export class AppModule {}
