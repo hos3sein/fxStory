@@ -10,12 +10,13 @@ import { ConfigModule } from '@nestjs/config';
 import { auth } from 'src/middleware/middleware.middleware';
 import { CacheModule } from '@nestjs/cache-manager';
 import { UserSchema } from 'src/messaging/entities/user.entity';
+import { ConnectionService } from 'src/connection/connection.service';
 
 
 @Module({
   imports: [CacheModule.register() ,ConfigModule.forRoot({ envFilePath: 'config.env', isGlobal: true }), MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING), MongooseModule.forFeature([{ name: 'community', schema: contentSchema },{ name: 'user', schema: UserSchema }])],
   controllers: [ContentController, MessagingController],
-  providers: [ContentService, MessagingController, MessagingService],
+  providers: [ContentService, MessagingController, MessagingService , ConnectionService],
 })
 
 export class ContentModule implements NestModule {
